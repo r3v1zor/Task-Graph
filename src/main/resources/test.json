@@ -1,0 +1,38 @@
+{
+  "type": "String",
+  "weighted": false,
+  "directional": false,
+  "map": [
+    {
+      "label": "node1",
+      "weighted": [
+        {
+          "label" : "node2",
+          "weight": "0"
+        },
+        {
+          "label": "node3",
+          "weight": "0"
+        }
+      ]
+    },
+    {
+      "label": "node2",
+      "weighted": [
+        {
+          "label": "node1",
+          "weight": "0"
+        }
+      ]
+    },
+    {
+      "label": "node3",
+      "weighted": [
+        {
+          "label": "node1",
+          "weight": "0"
+        }
+      ]
+    }
+  ]
+}

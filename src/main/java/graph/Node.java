@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class Node<T> {
     T label;
-    Map<Node<T>, Integer> weights;
+    Map<T, Long> weights;
 
-    public Node(T label, Map<Node<T>, Integer> weights) {
+    public Node(T label, Map<T, Long> weights) {
         this.label = label;
         this.weights = weights;
     }

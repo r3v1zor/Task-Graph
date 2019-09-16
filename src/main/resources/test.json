@@ -1,38 +1,25 @@
 {
-  "type": "String",
   "weighted": false,
-  "directional": false,
-  "map": [
-    {
-      "label": "node1",
-      "weighted": [
-        {
-          "label" : "node2",
-          "weight": "0"
-        },
-        {
-          "label": "node3",
-          "weight": "0"
-        }
-      ]
-    },
-    {
+  "directional": true,
+  "nodes": {
+    "node2": {
       "label": "node2",
-      "weighted": [
-        {
-          "label": "node1",
-          "weight": "0"
-        }
-      ]
+      "weights": {
+        "node1": 0
+      }
     },
-    {
+    "node3": {
       "label": "node3",
-      "weighted": [
-        {
-          "label": "node1",
-          "weight": "0"
-        }
-      ]
+      "weights": {
+        "node1": 0
+      }
+    },
+    "node1": {
+      "label": "node1",
+      "weights": {
+        "node2": 0,
+        "node3": 0
+      }
     }
-  ]
+  }
 }

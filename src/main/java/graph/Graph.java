@@ -1,25 +1,25 @@
 package graph;
 
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Graph<T> {
-    boolean weighted;
-    boolean directional;
-    Map<T, Node<T>> nodes;
+    private boolean weighted;
+    private boolean directional;
+    private Map<T, Node<T>> nodes;
 
 
     public Graph(Map<T, Node<T>> nodes) {
         this.nodes = new HashMap<>(nodes);
-
     }
 
     public Graph() {
@@ -27,29 +27,60 @@ public class Graph<T> {
     }
 
     public Graph(String filepath) {
-        JSONParser parser = new JSONParser();
         try (FileReader input = new FileReader(filepath)) {
-            JSONObject jsObject = (JSONObject) parser.parse(input);
-            String type = (String) jsObject.get("type");
-            weighted = (boolean) jsObject.get("weighted");
-            directional = (boolean) jsObject.get("directional");
+            Gson gson = new Gson();
+            Type type = new TypeToken<Graph<T>>() {
+            }.getType();
 
+            Graph<T> graph = gson.fromJson(input, type);
 
-            JSONArray map = (JSONArray) jsObject.get("map");
-            map.forEach(node -> {
-                Node<T> nodeT = parseNode((JSONObject) node);
+            nodes = graph.getNodes();
+            weighted = graph.isWeighted();
+            directional = graph.isDirectional();
 
-            });
-        } catch (IOException | ParseException exp) {
+        } catch (IOException exp) {
             exp.printStackTrace();
         }
     }
 
-    private Node<T> parseNode(JSONObject node) {
-
-        System.out.println(node);
-        return null;
+    public void saveToJson(String path, String filename) {
+        Gson gson = new Gson();
+        try (FileWriter writer = new FileWriter(path + filename)) {
+            final Graph<T> graph = new Graph<>(getNodes());
+            final String json = gson.toJson(graph);
+            writer.write(json);
+        } catch (IOException exp) {
+            exp.printStackTrace();
+        }
     }
+
+
+    public void addNode(T label, Map<T, Long> connections) {
+        nodes.put(label, new Node<>(label, connections));
+    }
+
+    public void addConnection(T label1, T label2, Long weight) {
+        if (directional) {
+            nodes.get(label1).weights.put(label2, weight);
+        } else {
+            nodes.get(label1).weights.put(label2, weight);
+            nodes.get(label2).weights.put(label1, weight);
+        }
+    }
+
+    public void removeNode(T label) {
+        for (Node<T> node : nodes.values()) {
+            node.weights.remove(label);
+        }
+        nodes.remove(label);
+    }
+
+    public void removeConnection(T label1, T label2){
+        nodes.get(label1).weights.remove(label2);
+        nodes.get(label2).weights.remove(label1);
+    }
+
+
 
     public boolean isWeighted() {
         return weighted;
@@ -65,5 +96,9 @@ public class Graph<T> {
 
     public void setDirectional(boolean directional) {
         this.directional = directional;
+    }
+
+    private Map<T, Node<T>> getNodes() {
+        return nodes;
     }
 }
